@@ -12,13 +12,13 @@ fi
 if [[ ! $2 ]]; then
 	PG_USER=postgres
 else
-	PG_USER=$3
+	PG_USER=$2
 fi
 
 cwd=$(pwd)
 
 # Install pg_amqp extension  
-#cd /usr/src/pg_amqp && rm -f -r pg_amqp && git clone https://github.com/silentnull/pg_amqp.git
+cd /usr/src/ && rm -f -r pg_amqp && git clone https://github.com/silentnull/pg_amqp.git
 cd /usr/src/pg_amqp && USE_PGXS=1 make -s check && USE_PGXS=1 make install
 
 cd ${cwd}
@@ -31,3 +31,4 @@ cd ${cwd}
 # 	DROP EXTENSION IF EXISTS amqp;
 # 	CREATE EXTENSION IF NOT EXISTS amqp;
 # EOSQL
+ 
