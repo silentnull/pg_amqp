@@ -386,7 +386,9 @@ static int amqp_login_inner(amqp_connection_state_t state,
     server_heartbeat = s->heartbeat;
   }
 
-  if (server_channel_max != 0 && server_channel_max < channel_max) {
+  // patch from upstream 0.4.x: https://github.com/omniti-labs/pg_amqp/issues/23
+  // fix RabbitMQ channel max is set to 2048: https://github.com/rabbitmq/rabbitmq-server/pull/1594
+  if (server_channel_max != 0 && (server_channel_max < channel_max || channel_max == 0)) {
     channel_max = server_channel_max;
   }
 

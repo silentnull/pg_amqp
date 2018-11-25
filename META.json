@@ -17,9 +17,9 @@
     },
    "provides": {
      "amqp": {
-       "file": "sql/amqp--0.4.1.sql",
+       "file": "sql/amqp--0.4.2.sql",
         "docfile": "doc/amqp.md",
-       "version": "0.4.1",
+       "version": "0.4.2",
        "abstract": "AMQP protocol support for PostgreSQL"
      }
    },

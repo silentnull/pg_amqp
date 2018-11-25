@@ -1,3 +1,7 @@
+0.4.2
+-- Add support RMQ maximum channel connections as param in broker table.
+-- Fix https://github.com/omniti-labs/pg_amqp/issues/23 - thanks 
+
 0.4.1
 -- Clarify commit warning messages with error codes. Also corrected the warning message for rollbacks (Github Pull Request #15).
 

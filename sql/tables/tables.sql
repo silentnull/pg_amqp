@@ -5,6 +5,7 @@ CREATE TABLE @extschema@.broker (
   vhost text,
   username text,
   password text,
+  channel_max integer NOT NULL DEFAULT 2048
   PRIMARY KEY (broker_id, host, port)
 );
 

@@ -156,7 +156,7 @@ local_amqp_get_bs(broker_id) {
   struct brokerstate *bs = local_amqp_get_a_bs(broker_id);
   if(bs->conn) return bs;
   if(SPI_connect() == SPI_ERROR_CONNECT) return NULL;
-  snprintf(sql, sizeof(sql), "SELECT host, port, vhost, username, password "
+  snprintf(sql, sizeof(sql), "SELECT host, port, vhost, username, password, channel_max "
                              "  FROM amqp.broker "
                              " WHERE broker_id = %d "
                              " ORDER BY host DESC, port", broker_id);
@@ -171,6 +171,8 @@ local_amqp_get_bs(broker_id) {
       Datum port_datum;
       bool is_null;
       int port = 5672;
+      Datum channel_max_datum; 
+      int channel_max = 2048;
       bs->idx = (bs->idx + 1) % SPI_processed;
       host = SPI_getvalue(SPI_tuptable->vals[bs->idx], SPI_tuptable->tupdesc, 1);
       if(!host) host = "localhost";
@@ -183,6 +185,8 @@ local_amqp_get_bs(broker_id) {
       pass = SPI_getvalue(SPI_tuptable->vals[bs->idx], SPI_tuptable->tupdesc, 5);
       if(!pass) pass = "guest";
       snprintf(host_copy, sizeof(host_copy), "%s:%d", host, port);
+      channel_max_datum = SPI_getbinval(SPI_tuptable->vals[bs->idx], SPI_tuptable->tupdesc, 6, &is_null);
+      if(!is_null) channel_max = DatumGetInt32(channel_max_datum);
 
       bs->conn = amqp_new_connection();
       if(!bs->conn) { SPI_finish(); return NULL; }
@@ -193,7 +197,7 @@ local_amqp_get_bs(broker_id) {
         goto busted;
       }
       amqp_set_sockfd(bs->conn, bs->sockfd);
-      s_reply = amqp_login(bs->conn, vhost, 0, 131072,
+      s_reply = amqp_login(bs->conn, vhost, channel_max, 131072,
                            0, AMQP_SASL_METHOD_PLAIN,
                            user, pass);
       if(s_reply.reply_type != AMQP_RESPONSE_NORMAL) {

@@ -4,3 +4,5 @@ ignore/*
 .deps/*
 *.o
 *.so
+
+sftp-config.json
